@@ -111,33 +111,33 @@ def inference_segmentor(model, imgs, custom_test_pipeline=None):
 def inference_on_file(model, target_image, output_image, custom_test_pipeline):
     
     time_taken=-1
-    try:
-        st = time.time()
-        print('Running inference...')
-        result = inference_segmentor(model, target_image, custom_test_pipeline)
-        print("Output has shape: " + str(result[0].shape))
+    # try:
+    st = time.time()
+    print('Running inference...')
+    result = inference_segmentor(model, target_image, custom_test_pipeline)
+    print("Output has shape: " + str(result[0].shape))
 
-        ##### get metadata mask
-        mask = open_tiff(target_image)
-        meta = get_meta(target_image)
-        mask = np.where(mask == meta['nodata'], 1, 0)
-        mask = np.max(mask, axis=0)[None]
+    ##### get metadata mask
+    mask = open_tiff(target_image)
+    meta = get_meta(target_image)
+    mask = np.where(mask == meta['nodata'], 1, 0)
+    mask = np.max(mask, axis=0)[None]
 
-        result[0] = np.where(mask == 1, -1, result[0])
+    result[0] = np.where(mask == 1, -1, result[0])
 
-        ##### Save file to disk
-        meta["count"] = 1
-        meta["dtype"] = "int16"
-        meta["compress"] = "lzw"
-        meta["nodata"] = -1
-        print('Saving output...')
-        write_tiff(result[0], output_image, meta)
-        et = time.time()
-        time_taken = np.round(et - st, 1)
-        print(f'Inference completed in {str(time_taken)} seconds. Output available at: ' + output_image)
+    ##### Save file to disk
+    meta["count"] = 1
+    meta["dtype"] = "int16"
+    meta["compress"] = "lzw"
+    meta["nodata"] = -1
+    print('Saving output...')
+    write_tiff(result[0], output_image, meta)
+    et = time.time()
+    time_taken = np.round(et - st, 1)
+    print(f'Inference completed in {str(time_taken)} seconds. Output available at: ' + output_image)
         
-    except:
-        print(f'Error on image {target_image} \nContinue to next input')
+    # except:
+    #    print(f'Error on image {target_image} \nContinue to next input')
         
     return time_taken
 
