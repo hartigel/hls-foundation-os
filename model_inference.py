@@ -123,6 +123,8 @@ def inference_on_file(model, target_image, output_image, custom_test_pipeline):
     mask = np.where(mask == meta['nodata'], 1, 0)
     mask = np.max(mask, axis=0)[None]
 
+    print("mask: ", mask.shape(), " result: ", result.shape())
+
     result[0] = np.where(mask == 1, -1, result[0])
 
     ##### Save file to disk
