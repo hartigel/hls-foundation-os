@@ -120,13 +120,16 @@ def inference_on_file(model, target_image, output_image, custom_test_pipeline):
     ##### get metadata mask
     mask = open_tiff(target_image)
     print("mask shape:", mask.shape) # mask shape is (512,512,6) 
-    # mask = mask.transpose(1, 2, 0)
+    # mask = mask.transpose(2, 0, 1)
     meta = get_meta(target_image)
+    # meta['nodata'] is a float = -1000 indicating no data at that point
     print(meta['nodata'])
     # print("meta['nodata'] shape: ", meta['nodata'].shape)
+    # set mask equal to 1 where there is nodata and 0 otherwise
     mask = np.where(mask == meta['nodata'], 1, 0)
+    print("mask shape after where:", mask.shape)
     mask = np.max(mask, axis=0)[None]
-    print(mask.shape)
+    print("mask shape after max:", mask.shape)
 
     print("mask: ", mask.shape, " result: ", result[0].shape)
 
