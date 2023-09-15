@@ -119,6 +119,7 @@ def inference_on_file(model, target_image, output_image, custom_test_pipeline):
 
     ##### get metadata mask
     mask = open_tiff(target_image)
+    print(mask.shape)
     meta = get_meta(target_image)
     mask = np.where(mask == meta['nodata'], 1, 0)
     mask = np.max(mask, axis=0)[None]
